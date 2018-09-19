@@ -1,0 +1,166 @@
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+
+namespace ClassLibrary1
+{
+    //Class that will serve as the driver
+    public class PDBConverter
+    {
+        //String that will be used to construct an individual atom
+        private string line;
+        //List of all strings that are to be constructed into atoms
+        private List<string> atoms;
+        //list of all connections from the end of the PDB file that will be appended to the appropriate string in the atoms List
+        private List<string> connections;
+
+        //Constructor that initializes empty lists
+        public PDBConverter()
+        {
+            atoms = new List<string>();
+            connections = new List<string>();
+        }
+
+        //method to read in a file given a file path
+        public void readLines(string filePath)
+        {
+            //read the file and advance the line while the next one is not null
+            System.IO.StreamReader file = new System.IO.StreamReader(filePath);
+            while ((line = file.ReadLine()) != null)
+            {
+                //create an array of strings by splitting the line on spaces
+                var array = line.Split(new string[] { " " }, StringSplitOptions.None);
+
+                //if the line begins with atom or hetatm, add that line to our atoms array
+                if (array[0].ToLower() == "atom" || array[0].ToLower() == "hetatm")
+                {
+                    System.Console.WriteLine("Adding " + line);
+                    atoms.Add(line);
+                }
+
+                //If the line begins with conect, add that line to the array of connections to be handled later
+                if (array[0].ToLower() == "conect")
+                {
+                    System.Console.WriteLine("Adding  connection" + line);
+                    connections.Add(line);
+                }
+            }
+
+            //foreach (string s in connections)
+            //{
+            //    string str;
+            //    str = Regex.Replace(s, @"\s+", " ");
+            //    string[] strings = str.Split(' ');
+
+            //}
+
+        }
+
+
+        //Main method, drives the program
+        public static void Main()
+        {
+            //initialize a converter and have it read in lines from a pdb file
+            PDBConverter converter = new PDBConverter();
+            //File path here must be changed, will have to be parameterized in actual implementation
+            converter.readLines(@"C:\Users\admin\Downloads\cyclohexane.pdb");
+
+            //Process all the connections from the PDB file
+            foreach (string s in converter.connections)
+            {
+                //Initialize a string that will hold the trimmed version of the connection from the PDB file
+                string str;
+                //trim the extra spaces out of the string
+                str = Regex.Replace(s, @"\s+", " ");
+                //create an array for every word in the string
+                string[] strings = str.Split(' ');
+
+                //add the the connections to the appropriate atom, skip the first 2 fields as they dont hold data we need
+                for (int i = 3; i < strings.Length; i++)
+                {
+                    converter.atoms[Convert.ToInt32(strings[2])] += "  " + strings[i];
+                }
+            }
+
+            File.AppendAllText(@"C:\Users\admin\Downloads\cyclohexane.cc1", converter.atoms.Count.ToString()+"\r\n");
+            //create an atom object for every atom string
+            foreach (string atom in converter.atoms)
+            {
+                Atom a = new Atom(atom);
+                //print out the cc1 formatted string using the overidden toString method
+                //Console.Out.WriteLine(a.toString());
+
+                //myPath = "C:\file.txt"
+
+                //Write string to file
+                 File.AppendAllText(@"C:\Users\admin\Downloads\cyclohexane.cc1", a.toString()+"\r\n");
+
+               // Console.Out.Write(a.toString());
+             
+            }
+
+        
+        }
+    }
+
+
+    //class to hold only the required data passed in from the PDB file
+    public class Atom
+    {
+        //instance variables for all the necessary data from the PDB
+        private string id;
+        private string element;
+        
+        private string coordinate1;
+        private string coordinate2;
+        private string coordinate3;
+        private string colorCode;
+        //list to hold connections, if any. List is used because there is no fixed amount.
+        private List<string> connections;
+
+        //Constructor called using a string
+        public Atom(String s)
+        {
+            //initialize the list of connections        
+            connections = new List<string>();
+            Random rnd = new Random();
+            colorCode = rnd.Next(1, 9).ToString();
+
+            //Trim extra spaces from string passed in
+            s = Regex.Replace(s, @"\s+", " ");
+            //create an array by splitting the trimmed string by spaces
+            string[] strings = s.Split(' ');
+
+            //set instance variables based on the string array
+            id = strings[1];
+            element = strings[11];
+            coordinate1 = strings[6];
+            coordinate2 = strings[7];
+            coordinate3 = strings[8];
+
+
+            //get the connections from the string, which starts at index 12
+            for (int i = 12; i < strings.Length; i++)
+            {
+                connections.Add(strings[i]);
+            }
+        }
+
+        //Over ridden toString method that will output a string 
+        public string toString()
+        {
+            //build string with atom information
+            String s = "  " + element + "    " + id + "    " + coordinate1 + "    " + coordinate2 + "    " + coordinate3 + "     " + colorCode +"    ";
+            //Append connection info, if any is present
+            foreach (string str in connections)
+            {
+                s += str + "    ";
+            }
+            //return the string in the cc1 format
+            return s;
+        }
+
+    }
+}
+

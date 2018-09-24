@@ -15,7 +15,7 @@ public class VRScaling : MonoBehaviour
     public SteamVR_TrackedObject trackedobj;
     public SteamVR_TrackedObject trackedobj2;
 
-
+    //tracks the movement of the left controller
     private SteamVR_Controller.Device controllerLeft
     {
         get
@@ -23,6 +23,7 @@ public class VRScaling : MonoBehaviour
             return SteamVR_Controller.Input((int)trackedobj.index);
         }
     }
+    //tracks the movement of the right controller
     private SteamVR_Controller.Device controllerRight
     {
         get
@@ -36,9 +37,10 @@ public class VRScaling : MonoBehaviour
 
     public bool sideButtonPushed = false;
 
+    //figures out which is the left controller and which is the right controller
     int rightIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
     int leftIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
-
+   
     private SteamVR_Controller.Device rightDevice = SteamVR_Controller.Input(rightIndex);
     private SteamVR_Controller.Device leftDevice = SteamVR_Controller.Input(leftIndex);
 
@@ -59,18 +61,28 @@ public class VRScaling : MonoBehaviour
     }
 
     void Update()
-    { 
-        //Test to see if the button is pressed down on both controllers
-        if ((leftDevice.GetPress(SteamVR_Controller.ButtonMask.Grip)) && (rightDevice.GetPress(SteamVR_Controller.ButtonMask.Grip)))
+    {
+        //Test to see if the button is pressed down on the left controller
+        if (leftDevice.GetPress(SteamVR_Controller.ButtonMask.Grip))
         {
             //get the x and the y position of the molecule
             int xVal = molecule.transform.position.x;
             int yVal = molecule.transform.position.y;
 
-            //scalle the molecule up by one
-            molecule.transform.localScale += new Vector3(xVal, 1, yVal);
+            //IF the left grip button is pressed scale the molecule down one
+            molecule.transform.localScale += new Vector3(xVal, -1, yVal);
         }
+        //Test to see if the button is pressed down on the right controller
+        if (rightDevice.GetPress(SteamVR_Controller.ButtonMask.Grip))
+        {
+            //get the x and the y position of the molecule
+            int xVal = molecule.transform.position.x;
+            int yVal = molecule.transform.position.y;
+
+            //IF the right grip button is pressed scale the molecule up one
+            molecule.transform.localScale += new Vector3(xVal, 1, yVal);
 
 
+        }
     }
 }

@@ -11,6 +11,8 @@ using UnityEngine;
 public class gripButtonScale : MonoBehaviour
 {
 
+    
+
     //create an instance of a tracked object
     public SteamVR_TrackedObject trackedobj;
 
@@ -52,13 +54,13 @@ public class gripButtonScale : MonoBehaviour
         if (controller.GetPress(SteamVR_Controller.ButtonMask.Grip))
         {
 
-            //IF the right grip button is pressed scale the molecule up by .5f
-            molecule.transform.localScale += new Vector3(.05f, .05f, .05f);
+            //IF the right grip button is pressed scale the molecule up by half of its current x, y and z positions 
+            molecule.transform.localScale += new Vector3(molecule.transform.position.x/2, molecule.transform.position.y/2, molecule.transform.position.z/2);
             gripButtonPushed = true;
             //Debug.Log(gripButtonPushed);
         }
-       
-    
 
-}
+
+
+    }
 }

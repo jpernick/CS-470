@@ -1,0 +1,55 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+// ===============================
+// AUTHOR: Joe Pernick
+// DATE: 29 October, 2018
+// PURPOSE: Allow for second molecule to be added 
+// ===============================
+
+public class gripButtonScale : MonoBehaviour
+{
+
+
+
+    //create an instance of a tracked object
+    public SteamVR_TrackedObject trackedobj;
+
+
+    //tracks the movement of the right controller
+    private SteamVR_Controller.Device controller
+    {
+        get
+        {
+            return SteamVR_Controller.Input((int)trackedobj.index);
+        }
+    }
+
+    //creates a game object of the two molecules
+    public GameObject molecule;
+    public Gameobject moleculeTwo; 
+
+    
+
+
+    void Start()
+    {
+
+
+        //if the molecule cannot be retrieved by setting it in the Unity Editor, look for it.
+        if (molecule == null)
+        {
+            molecule = GameObject.FindGameObjectWithTag("Mol");
+        }
+
+        moleculeTwo = molecule;
+        trackedobj = GetComponent<SteamVR_TrackedObject>();
+
+
+        moleculeTwo.position = molecule.position + Transform.TransformDirection(5,5,5);
+
+    }
+
+ 
+}

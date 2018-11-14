@@ -1,0 +1,18 @@
+ public void createMirror()
+    {
+        if (copy == null)
+        {
+            // set molecule two to the first molecules position plus 10 to its x and y values
+            GameObject copy = Instantiate(CurrentMolecule, new Vector3(CurrentMolecule.transform.position.x + 5.0f, CurrentMolecule.transform.position.y, CurrentMolecule.transform.position.z),
+            new Quaternion(CurrentMolecule.transform.position.x, CurrentMolecule.transform.position.y, CurrentMolecule.transform.position.z, 1)) as GameObject;
+        } 
+         
+    }
+
+    public void destroyMirror()
+    {
+        if (copy != null)
+        {
+            Destroy(copy);
+        }
+    }

@@ -1,0 +1,19 @@
+void Update()
+    {
+        //Test to see if the grip button is pressed down on the right controller
+        //10/31/2018 Makes it so the molecule cannot scale smaller than 10f and no larger than 100f
+
+        if (controller.GetPress(SteamVR_Controller.ButtonMask.Grip))
+        {
+            if (molecule.transform.position.x < 100)
+            {
+                //IF the right grip button is pressed scale the molecule up by half of its current x, y and z positions 
+                molecule.transform.localScale += new Vector3(0.2f, 0.2f, 0.2f);
+                gripButtonPushed = true;
+                //Debug.Log(gripButtonPushed);
+            }
+        }
+
+
+
+    }
